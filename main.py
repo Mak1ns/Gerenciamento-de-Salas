@@ -2,6 +2,7 @@ import streamlit as st
 
 from views.inicio_view import show_inicio
 from views.usuarios_view import show_usuarios
+from views.salas_view import show_salas
 
 
 st.set_page_config(
@@ -22,6 +23,7 @@ with st.sidebar:
         [
             "🏠 Início",
             "👥 Usuários",
+            '🏫 Salas de Aula',
         ]
     )
 
@@ -35,3 +37,6 @@ if pagina == "🏠 Início":
 
 elif pagina == "👥 Usuários":
     show_usuarios()
+
+elif pagina == '🏫 Salas de Aula':
+    show_salas()

@@ -1,0 +1,8 @@
+id_sala,nome_sala,capacidade,bloco_andar,recursos_disponiveis,status
+101,Laboratório de Informática,30,Bloco A - 1º Andar,Computadores e Projetor,Ativo
+102,Sala de Reuniões,20,Bloco B - 2º Andar,Projetor,Ativo
+103,Sala de Aula,40,Bloco C - 3º Andar,Quadro Branco,Ativo
+104,Sala de Estudos,15,Bloco D - 4º Andar,Mesas e Cadeiras,Ativo
+105,Sala de Conferências,50,Bloco E - 5º Andar,Projetor e Microfone,Ativo
+106,Sala de Treinamento,25,Bloco F - 6º Andar,Computadores e Projetor,Ativo
+

@@ -1,9 +1,6 @@
 id,nome,email,perfil,status
 1,Anderson Seixas,anderson@email.com,Administrador,Ativo
-2,Mariana Melo,mariana@email.com,Usuário,Ativo
-3,Carlos Silva,carlos@email.com,Usuário,Ativo
-4,Ana Oliveira,ana@email.com,Gestor,Ativo
-5,João Santos,joao@email.com,Usuário,Inativo
-6,Fernanda Costa,fernanda@email.com,Gestor,Ativo
-7,Lucas Pereira,lucas@email.com,Usuário,Ativo
-8,Juliana Souza,juliana@email.com,Usuário,Ativo
+2,Marcus Melo,marcusmelo@gmail.com,Administrador,Ativo
+3,Maria Silva,maria@gmail.com.br,Professor,Ativo
+4,Mario Jose, Mariojose@gmail.com,Professor,Ativo
+5,Carlos Souza,carlos@gmail.com,Professor,Ativo

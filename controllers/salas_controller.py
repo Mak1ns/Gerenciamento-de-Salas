@@ -9,11 +9,11 @@ class SalasController:
     def listar_salas(self):
         return self.model.listar_todos()
 
-    def buscar_sala(self, nome):
-        if not nome:
+    def buscar_sala(self, nome_sala):
+        if not nome_sala:
             return self.model.listar_todos()
 
-        return self.model.buscar_por_nome(nome)
+        return self.model.buscar_por_nome(nome_sala)
 
     def quantidade_salas(self):
         salas = self.model.listar_todos()

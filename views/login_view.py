@@ -1,5 +1,5 @@
 import streamlit as st 
-from controllers.usuario_controller import UsuarioController
+from controllers.auth_controller import AuthController
 
 def render_login(form_key="form_login"):
     st.markdown("<h1 style='text-align: center; margin-bottom: 0; color: #FFA500'>ÁTILA</h1>", unsafe_allow_html=True)
@@ -17,14 +17,17 @@ def render_login(form_key="form_login"):
             btn_entrar = st.form_submit_button("Entrar")
 
         if btn_entrar:
-            controller = UsuarioController()
-            usuarios = controller.listar_usuarios() if hasattr(controller, 'listar_usuarios') else []
-            
-            usuario_encontrado = None
-            if not usuarios.empty if hasattr(usuarios, 'empty') else usuarios:
-                resultado = usuarios[usuarios["email"].astype(str).str.strip().str.lower() == email.strip().lower()]
-                if not resultado.empty:
-                    usuario_encontrado = resultado.iloc[0]
+            controller = AuthController()
+            is_authenticated, usuario, mensagem = controller.tentar_login(email, senha)
+
+            if is_authenticated:
+                st.session_state["autenticado"] = True
+                st.session_state["usuario_logado"] = usuario["nome"]
+                st.success("Login efetuado com sucesso!")
+                st.rerun()
+            else:
+                st.error(mensagem)
+                usuario_encontrado = None
 
             if usuario_encontrado is not None:
                 st.session_state["autenticado"] = True

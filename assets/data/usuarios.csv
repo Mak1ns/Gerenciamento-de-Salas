@@ -1,6 +1,3 @@
-id,nome,email,perfil,status
-1,Anderson Seixas,anderson@email.com,Administrador,Ativo
-2,Marcus Melo,marcusmelo@gmail.com,Administrador,Ativo
-3,Maria Silva,maria@gmail.com.br,Professor,Ativo
-4,Mario Jose, Mariojose@gmail.com,Professor,Ativo
-5,Carlos Souza,carlos@gmail.com,Professor,Ativo
+id,nome,email,senha,perfil,status
+2,Marcus Melo,marcusmelo@gmail.com,123456,Admnistrador,Ativo
+3,Maria Silva,maria@gmail.com,123456,Professor,Ativo

@@ -3,28 +3,34 @@ from controllers.usuario_controller import UsuarioController
 
 
 def render_login():
-    st.title("Login")
+    st.title("🔐 Login")
+    st.markdown("<h1 style='text-align: center; color: #000000'>ATILA</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #FFA500'>Reseerva de Salas - UniSapiens</p>", unsafe_allow_html=True)
 
-    st.write("Faça login para acessar o sistema.")
+col1, col2, col3 = st.columns([1, 2, 1])
+ 
+with col2:
+    st.markdown("# Autenticação")
+    
+    with st.form("form_login"):
+        email = st.text_input("E-mail")
+        senha = st.text_input("Senha", type="password")
+        btn_entrar = st.form_submit_button("Entrar")
 
-    st.divider()
+        if btn_entrar:
+            controller = UsuarioController()
+            usuarios = controller.listar_usuarios() if hasattr(controller, 'listar_usuarios') else []
+            
+            usuario_encontrado = None
+            if not usuarios.empty if hasattr(usuarios, 'empty') else usuarios:
+                resultado = usuarios[usuarios["email"].astype(str).str.strip().str.lower() == email.strip().lower()]
+                if not resultado.empty:
+                    usuario_encontrado = resultado.iloc[0]
 
-    username = st.text_input(
-        "Nome de usuário",
-        placeholder="Digite seu nome de usuário..."
-    )
-
-    password = st.text_input(
-        "Senha",
-        type="password",
-        placeholder="Digite sua senha..."
-    )
-
-    if st.button("Entrar"):
-        controller = UsuarioController()
-        if controller.autenticar_usuario(username, password):
-            st.success("Login bem-sucedido!")
-            # Redirecionar para a página inicial ou outra página
-            st.experimental_set_query_params(page="inicio")
-        else:
-            st.error("Nome de usuário ou senha inválidos.")
+            if usuario_encontrado is not None:
+                st.session_state["autenticado"] = True
+                st.session_state["usuario_logado"] = usuario_encontrado["nome"]
+                st.success("Login efetuado com sucesso!")
+                st.rerun()
+            else:
+                st.error("E-mail ou senha inválidos.")

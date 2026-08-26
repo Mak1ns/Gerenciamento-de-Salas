@@ -4,7 +4,7 @@ import streamlit as st
 def render_dasboard():
     usuario_logado = st.session_state.get("usuario_logado", {})
 
-    # Trata caso usuario_logado seja string ou dicionário
+    
     if isinstance(usuario_logado, dict):
         nome = usuario_logado.get("nome", "Usuário")
         perfil = usuario_logado.get("perfil", "Perfil não definido")

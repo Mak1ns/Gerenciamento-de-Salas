@@ -1,21 +1,20 @@
 import streamlit as st 
 from controllers.usuario_controller import UsuarioController
 
+def render_login(form_key="form_login"):
+    st.markdown("<h1 style='text-align: center; margin-bottom: 0; color: #FFA500'>ÁTILA</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #FFA500'>Reserva de Salas - UniSapiens</p>", unsafe_allow_html=True)
 
-def render_login():
-    st.title("🔐 Login")
-    st.markdown("<h1 style='text-align: center; color: #000000'>ATILA</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #FFA500'>Reseerva de Salas - UniSapiens</p>", unsafe_allow_html=True)
-
-col1, col2, col3 = st.columns([1, 2, 1])
- 
-with col2:
-    st.markdown("# Autenticação")
+    st.write("") # Espaçamento
     
-    with st.form("form_login"):
-        email = st.text_input("E-mail")
-        senha = st.text_input("Senha", type="password")
-        btn_entrar = st.form_submit_button("Entrar")
+    col1, col2, col3 = st.columns([1, 1.2, 1])
+ 
+    with col2:
+    
+        with st.form(form_key):
+            email = st.text_input("E-mail")
+            senha = st.text_input("Senha", type="password")
+            btn_entrar = st.form_submit_button("Entrar")
 
         if btn_entrar:
             controller = UsuarioController()

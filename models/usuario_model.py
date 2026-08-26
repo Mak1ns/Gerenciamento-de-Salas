@@ -1,7 +1,7 @@
 import os
 import csv
 
-class Usuario_model:
+class UsuarioModel:
     def buscar_usuario(self, nome, email):
         if not os.path.exists('usuarios.csv'):
             return None

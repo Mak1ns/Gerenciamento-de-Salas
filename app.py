@@ -8,14 +8,14 @@ st.set_page_config(
     layout="wide"        
 )
 
-if "logado" not in st.session_state:
-    st.session_state["logado"] = False
+if "autenticado" not in st.session_state:
+    st.session_state["autenticado"] = False
     
 if "usuario_logado" not in st.session_state:
     st.session_state["usuario_logado"] = None
 
 def main():
-    if not st.session_state["logado"]:
+    if not st.session_state["autenticado"]:
         render_login()
     else:
         render_dasboard()

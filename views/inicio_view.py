@@ -5,7 +5,7 @@ from controllers.usuario_controller import UsuarioController
 def show_inicio():
     controller = UsuarioController()
 
-    st.title("ÁTILA")
+    st.title(text_alignment="center", color="blue", text="ÁTILA")
     st.write("Seja Bem-Vindo ao Sistema de Gerenciamento de Salas de Aula.")
 
 

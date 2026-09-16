@@ -10,7 +10,6 @@ def render_login(form_key="form_login"):
     col1, col2, col3 = st.columns([1, 1.2, 1])
  
     with col2:
-    
         with st.form(form_key):
             email = st.text_input("E-mail")
             senha = st.text_input("Senha", type="password")
@@ -22,17 +21,9 @@ def render_login(form_key="form_login"):
 
             if is_authenticated:
                 st.session_state["autenticado"] = True
-                st.session_state["usuario_logado"] = usuario["nome"]
+                # CORREÇÃO PRINCIPAL: Salvar o dicionário 'usuario' inteiro, e não apenas o 'usuario["nome"]'
+                st.session_state["usuario_logado"] = usuario 
                 st.success("Login efetuado com sucesso!")
                 st.rerun()
             else:
                 st.error(mensagem)
-                usuario_encontrado = None
-
-            if usuario_encontrado is not None:
-                st.session_state["autenticado"] = True
-                st.session_state["usuario_logado"] = usuario_encontrado["nome"]
-                st.success("Login efetuado com sucesso!")
-                st.rerun()
-            else:
-                st.error("E-mail ou senha inválidos.")

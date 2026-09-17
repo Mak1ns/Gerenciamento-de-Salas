@@ -1,42 +1,89 @@
-import pandas as pd
+import sqlite3
 from pathlib import Path
 
 class ReservasModel:
     def __init__(self):
+        # Mantém o caminho correto apontando para o seu reservas.db original
         base_dir = Path(__file__).resolve().parent.parent
-        self.databse_path = base_dir / "assets" / "data" / "reservas.csv"
-        self.garantir_csv_existe()
+        self.db_path = base_dir / "reservas.db"
 
-    def garantir_csv_existe(self):
-        if not self.databse_path.exists():
-            self.reservas_path.parent.mkdir(parents=True, exist_ok=True)
-            df = pd.DataFrame(columns=["id_reserva", "id_usuario", "id_sala", "data", "hora_inicio", "hora_fim", "status"])
-            df.to_csv(self.databse_path, index=False)
-            
-    def listar_todos(self):
-        return pd.read_csv(self.databse_path, dtype={ "data": str, "hora_inicio": str, "hora_fim": str,})
-   
-    def save_reservas(self, id_usuario, id_sala, data, hora_inicio, hora_fim):
-        df = self.listar_todos()
-        novo_id = 1 if df.empty else df["id_reserva"].max() + 1
-        
-        nova_reserva = pd.DataFrame([{
-            "id_reserva": novo_id,
-            "id_usuario": id_usuario,
-            "id_sala": id_sala,
-            "data": data,
-            "hora_inicio": hora_inicio,
-            "hora_fim": hora_fim,
-            "status": "pendente"
-        }])
-        df = pd.concat([df, nova_reserva], ignore_index=True)
-        df.to_csv(self.databse_path, index=False)
-        
-        return True, "Sala reservada com sucesso!"
-    
-    def buscar_por_usuario(self,id_usuario):
-        df = self.listar_todos()
-        if df.empty:
-            return df
-            return df[df["id_usuario"] == id_usuario]
-        
+    def conectar(self):
+        return sqlite3.connect(self.db_path)
+
+    def criar_reserva(self, professor_id, sala_id, data, horario_inicio, horario_fim, finalidade):
+        try:
+            conexao = self.conectar()
+            cursor = conexao.cursor()
+            # Inserindo direto com o status 'Aprovada'
+            cursor.execute("""
+                INSERT INTO reservas (professor_id, sala_id, data, horario_inicio, horario_fim, finalidade, status)
+                VALUES (?, ?, ?, ?, ?, ?, 'Aprovada')
+            """, (professor_id, sala_id, str(data), str(horario_inicio), str(horario_fim), finalidade))
+            conexao.commit()
+            conexao.close()
+            return True, "Reserva realizada com sucesso!"
+        except Exception as e:
+            return False, f"Erro ao criar reserva: {e}"
+
+    def listar_todas(self):
+        try:
+            conexao = self.conectar()
+            cursor = conexao.cursor()
+            cursor.execute("""
+                SELECT r.id, u.nome, s.nome, r.data, r.horario_inicio, r.horario_fim, r.finalidade, r.status
+                FROM reservas r
+                LEFT JOIN usuarios u ON r.professor_id = u.id
+                LEFT JOIN salas s ON r.sala_id = s.id
+                ORDER BY r.data DESC, r.horario_inicio DESC
+            """)
+            reservas = cursor.fetchall()
+            conexao.close()
+            return reservas
+        except Exception as e:
+            print(f"Erro ao listar reservas: {e}")
+            return []
+
+    def listar_por_usuario(self, usuario_id):
+        try:
+            conexao = self.conectar()
+            cursor = conexao.cursor()
+            cursor.execute("""
+                SELECT r.id, u.nome, s.nome, r.data, r.horario_inicio, r.horario_fim, r.finalidade, r.status
+                FROM reservas r
+                LEFT JOIN usuarios u ON r.professor_id = u.id
+                LEFT JOIN salas s ON r.sala_id = s.id
+                WHERE r.professor_id = ?
+                ORDER BY r.data DESC, r.horario_inicio DESC
+            """, (usuario_id,))
+            reservas = cursor.fetchall()
+            conexao.close()
+            return reservas
+        except Exception as e:
+            print(f"Erro ao listar reservas por usuário: {e}")
+            return []
+
+    def excluir_reserva(self, reserva_id):
+        try:
+            conexao = self.conectar()
+            cursor = conexao.cursor()
+            cursor.execute("DELETE FROM reservas WHERE id = ?", (reserva_id,))
+            conexao.commit()
+            conexao.close()
+            return True, "Reserva excluída com sucesso!"
+        except Exception as e:
+            return False, f"Erro ao excluir reserva: {e}"
+
+    def atualizar_reserva(self, reserva_id, sala_id, data, horario_inicio, horario_fim, finalidade):
+        try:
+            conexao = self.conectar()
+            cursor = conexao.cursor()
+            cursor.execute("""
+                UPDATE reservas 
+                SET sala_id = ?, data = ?, horario_inicio = ?, horario_fim = ?, finalidade = ?
+                WHERE id = ?
+            """, (sala_id, str(data), str(horario_inicio), str(horario_fim), finalidade, reserva_id))
+            conexao.commit()
+            conexao.close()
+            return True, "Reserva atualizada com sucesso!"
+        except Exception as e:
+            return False, f"Erro ao atualizar reserva: {e}"

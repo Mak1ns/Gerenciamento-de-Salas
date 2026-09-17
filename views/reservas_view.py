@@ -1,90 +1,83 @@
-from datetime import datetime, time
 import streamlit as st
-from controllers.reservas_controller import ReservasController
-from controllers.salas_controller import SalasController
+import datetime
+from models.salas_model import SalasModel
+from models.reservas_model import ReservasModel
 
+reserva_model = ReservasModel()
 
-def render_tela_reserva():
-    st.subheader("Solicitar nova reserva")
-
-    reservas_controller = ReservasController()
-    salas_controller = SalasController()
+def render_reserva_salas():
+    st.markdown("<h2 style='color: #FFA500;'>🗓️ Solicitar Nova Reserva</h2>", unsafe_allow_html=True)
+    st.write("Preencha os campos abaixo para realizar o agendamento de uma sala.")
 
     usuario_logado = st.session_state.get("usuario_logado", {})
-
     if isinstance(usuario_logado, dict):
-        id_usuario = usuario_logado.get("id", 1)
+        usuario_id = usuario_logado.get("id", 1)
+        nome_usuario = usuario_logado.get("nome", "Usuário")
     else:
-        id_usuario = 1
+        usuario_id = 1
+        nome_usuario = str(usuario_logado)
 
-    df_salas = salas_controller.listar_salas()
+    salas_model = SalasModel()
+    salas = salas_model.listar_salas_disponiveis()
 
-    if df_salas.empty:
-        st.warning("Nenhuma sala encontrada no Sistema")
+    if not salas:
+        salas_todas = salas_model.listar_todos()
+        if not salas_todas:
+            st.error("Nenhuma sala cadastrada no banco de dados.")
+            return
+        salas = [(s[0], s[1], s[2], s[3]) for s in salas_todas]
 
     opcoes_salas = {
-        f"{row['nome_sala']} ({row['bloco_andar']})": row["id_sala"]
-        for _, row in df_salas.iterrows
+        f"{sala[1]} — {sala[3]} (Capacidade: {sala[2]} pessoas)": sala[0] 
+        for sala in salas
     }
 
-    with st.form("Form Nova Reserva"):
-        sala_selecionada = st.selectbox(
-            "Selecione a Sala", options=list(opcoes_salas.keys())
-        )
-        date_reserva = st.date_input(
-            "Data da Reserva", min_value=datetime.today()
-        )
-
-        col1, col2 = st.columns(2)
-        with col1:
-            hora_inicio = st.time_input("Hora de Inicio", value=time(8, 0))
-        with col2:
-            hora_fim = st.time_input("Hora de Término", value=(10, 0))
-
-        btn_confirmar = st.form_submit_button("Confirmar Agendamento")
-
-        if btn_confirmar:
-            id_sala = opcoes_salas[sala_selecionada]
-            sucesso, msg = reservas_controller.agendar_sala(
-                id_usuario, id_sala, date_reserva, hora_inicio, hora_fim
+    with st.form("form_solicitar_reserva"):
+        st.info(f"**Solicitante:** {nome_usuario}")
+        
+        sala_label = st.selectbox("Selecione a Sala", list(opcoes_salas.keys()))
+        
+        col_data, col_vazia = st.columns([1, 1])
+        with col_data:
+            # FORMATO DA DATA ALTERADO AQUI: format="DD/MM/YYYY"
+            data_reserva = st.date_input(
+                "Data da Reserva", 
+                min_value=datetime.date.today(),
+                format="DD/MM/YYYY"
             )
+        
+        col_ini, col_fim = st.columns(2)
+        with col_ini:
+            horario_inicio = st.time_input("Horário de Início", datetime.time(8, 0))
+        with col_fim:
+            horario_fim = st.time_input("Horário de Término", datetime.time(10, 0))
 
-            if sucesso:
-                st.success(msg)
-                st.rerun()
-            else:
-                st.error(msg)
-
-    st.markdown("---")
-    st.subheader(" Minhas Reservas")
-
-    df_minhas_reservas = reservas_controller.listar_reservas_por_usuario(
-        id_usuario
-    )
-
-    if not df_minhas_reservas.empty:
-        df_exibicao = df_minhas_reservas.merge(df_salas, on="id_sala")
-        st.dataframe(
-            df_exibicao[
-                [
-                    "id_reserva",
-                    "nome_sala",
-                    "data",
-                    "hora_inicio",
-                    "hora_fim",
-                    "status",
-                ]
-            ].rename(
-                columns={
-                    "id_reserva": "ID",
-                    "nome_sala": "Sala",
-                    "data": "Data",
-                    "hora_inicio": "Inicio",
-                    "hora_fim": "Fim",
-                    "status": "Status",
-                }
-            ),
-            use_container_width=True,
+        finalidade = st.text_area(
+            "Finalidade da Reserva", 
+            placeholder="Ex: Aula prática de Engenharia do Conhecimento, Apresentação de TCC, etc."
         )
-    else:
-        st.info("Você ainda não possui reservas cadastradas.")
+        
+        btn_submeter = st.form_submit_button("Confirmar Solicitação de Reserva")
+
+        if btn_submeter:
+            if not finalidade.strip():
+                st.error("Por favor, informe a finalidade da reserva.")
+            elif horario_inicio >= horario_fim:
+                st.error("O horário de término deve ser posterior ao horário de início.")
+            else:
+                sala_id_selecionada = opcoes_salas[sala_label]
+                
+                reserva_model = ReservasModel()
+                sucesso, mensagem = reserva_model.criar_reserva(
+                    professor_id=usuario_id,
+                    sala_id=sala_id_selecionada,
+                    data=data_reserva,
+                    horario_inicio=horario_inicio,
+                    horario_fim=horario_fim,
+                    finalidade=finalidade
+                )
+
+                if sucesso:
+                    st.success(f"✅ {mensagem}")
+                else:
+                    st.error(f"❌ {mensagem}")

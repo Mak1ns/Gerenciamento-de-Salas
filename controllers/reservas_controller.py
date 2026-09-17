@@ -17,7 +17,7 @@ class ReservasController:
         
         conflitos = df_sala[
             (df_sala["hora_inicio"] < hora_fim) & 
-             (df_sala["hora_fim"] > hora_inicio)
+            (df_sala["hora_fim"] > hora_inicio)
         ]
         
         return not conflitos.empty

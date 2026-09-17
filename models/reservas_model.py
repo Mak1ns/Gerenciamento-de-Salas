@@ -14,7 +14,7 @@ class ReservasModel:
         try:
             conexao = self.conectar()
             cursor = conexao.cursor()
-            # Inserindo direto com o status 'Aprovada'
+            #  status 'Aprovada'
             cursor.execute("""
                 INSERT INTO reservas (professor_id, sala_id, data, horario_inicio, horario_fim, finalidade, status)
                 VALUES (?, ?, ?, ?, ?, ?, 'Aprovada')

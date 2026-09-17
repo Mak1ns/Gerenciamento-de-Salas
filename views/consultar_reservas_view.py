@@ -82,7 +82,7 @@ def render_consultar_reservas():
                     sucesso = reservas_model.atualizar(
                         reserva_id, 
                         opcoes_salas[sala_id], 
-                        data.strftime("%Y-%m-%d"), 
+                        data.strftime("%d-%m-%Y"), 
                         inicio.strftime("%H:%M"), 
                         termino.strftime("%H:%M"), 
                         finalidade

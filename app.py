@@ -5,7 +5,7 @@ from views.dashboard_view import render_dasboard
 st.set_page_config(
     page_title="ÁTILA",
     page_icon="🏫",
-    layout="wide"        
+    layout="wide"
 )
 
 if "autenticado" not in st.session_state:
@@ -19,6 +19,6 @@ def main():
         render_login()
     else:
         render_dasboard()
-        
+
 if __name__ == "__main__":
     main()

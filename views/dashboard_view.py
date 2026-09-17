@@ -1,6 +1,7 @@
 import streamlit as st
 from views.reservas_view import render_reserva_salas
 from views.consultar_reservas_view import render_consultar_reservas
+from views.visao_geral_view import render_visao_geral  # <-- NOVA IMPORTAÇÃO AQUI
 
 def render_dasboard():
     # Recupera os dados do usuário logado
@@ -26,12 +27,10 @@ def render_dasboard():
 
     # Roteamento de telas
     if menu == "🏠 Início / Visão Geral":
-        st.title("🏠 Início / Visão Geral")
-        st.write("Sistema Inteligente de Gerenciamento de Salas de Aula - ÁTILA")
-        # Insira aqui os seus métricas/cards do dashboard inicial
+        # Chama a função que constrói os cards e tabelas
+        render_visao_geral()
 
     elif menu == "📅 Reserva de Salas":
-    
         render_reserva_salas()
 
     elif menu == "🔍 Consultar Reservas":

@@ -1,7 +1,8 @@
 import streamlit as st
 from views.reservas_view import render_reserva_salas
 from views.consultar_reservas_view import render_consultar_reservas
-from views.visao_geral_view import render_visao_geral  
+from views.visao_geral_view import render_visao_geral 
+from views.gerenciar_salas_view import render_gerenciar_salas
 
 def render_dasboard():
     #  dados do usuário logado
@@ -37,14 +38,7 @@ def render_dasboard():
         render_consultar_reservas()
 
     elif menu == "⚙️ Gerenciar Salas (Admin)":
-        st.title("⚙️ Gerenciar Salas")
-        st.write("Cadastrar e editar salas.")
-        
-        perfil = str(usuario_logado.get("perfil") or usuario_logado.get("tipo") or usuario_logado.get("funcao") or "").lower()
-        eh_admin = perfil in ["administrador", "admin"]
-        if not eh_admin:
-            st.warning("🔒 Acesso restrito: apenas administradores podem gerenciar salas.")
-            return
+        render_gerenciar_salas()
 
     # Botão de Logout
     st.sidebar.divider()

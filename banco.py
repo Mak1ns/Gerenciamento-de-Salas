@@ -74,22 +74,26 @@ def criar_salas_iniciais():
     conexao = conectar()
     cursor = conexao.cursor()
 
-    salas = [
-        ("Laboratório de Informática 01", 40, "Bloco A", "Sim", 40, "Disponível"),
-        ("Sala de Aula 102", 50, "Bloco B", "Sim", 0, "Disponível"),
-        ("Auditório Principal", 150, "Bloco Central", "Sim", 0, "Disponível")
-    ]
+    
+    cursor.execute("SELECT COUNT(*) FROM salas")
+    total_salas = cursor.fetchone()[0]
 
-    for sala in salas:
-        try:
+   
+    if total_salas == 0:
+        salas = [
+            ("Laboratório de Informática 01", 40, "Bloco A", "Sim", 40, "Disponível"),
+            ("Sala de Aula 102", 50, "Bloco B", "Sim", 0, "Disponível"),
+            ("Auditório Principal", 150, "Bloco Central", "Sim", 0, "Disponível")
+        ]
+
+        for sala in salas:
             cursor.execute("""
                 INSERT INTO salas (nome, capacidade, localizacao, projetor, computadores, status)
                 VALUES (?, ?, ?, ?, ?, ?)
             """, sala)
-        except sqlite3.IntegrityError:
-            pass
 
-    conexao.commit()
+        conexao.commit()
+    
     conexao.close()
 
 if __name__ == "__main__":

@@ -39,6 +39,12 @@ def render_dasboard():
     elif menu == "⚙️ Gerenciar Salas (Admin)":
         st.title("⚙️ Gerenciar Salas")
         st.write("Em breve: cadastro e edição de salas.")
+        
+        perfil = str(usuario_logado.get("perfil") or usuario_logado.get("tipo") or usuario_logado.get("funcao") or "").lower()
+        eh_admin = perfil in ["administrador", "admin"]
+        if not eh_admin:
+            st.warning("🔒 Acesso restrito: apenas administradores podem gerenciar salas.")
+            return
 
     # Botão de Logout
     st.sidebar.divider()

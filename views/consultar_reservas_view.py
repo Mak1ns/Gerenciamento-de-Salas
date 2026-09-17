@@ -73,7 +73,7 @@ def render_consultar_reservas():
                         break
 
                 sala_id = st.selectbox("Sala", list(opcoes_salas.keys()), index=idx_sala)
-                data = st.date_input("Data", value=pd.to_datetime(dados_reserva[3], dayfirst=True))
+                data = st.date_input("Data", value=pd.to_datetime(dados_reserva[3], format="mixed", dayfirst=True), format="DD/MM/YYYY")
                 inicio = st.time_input("Horário Início", value=pd.to_datetime(dados_reserva[4]).time())
                 termino = st.time_input("Horário Término", value=pd.to_datetime(dados_reserva[5]).time())
                 finalidade = st.text_input("Finalidade", value=dados_reserva[6])

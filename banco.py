@@ -7,45 +7,39 @@ def criar_banco():
     conexao = conectar()
     cursor = conexao.cursor()
 
-    # Tabela de salas
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS salas (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            capacidade INTEGER NOT NULL,
-            localizacao TEXT NOT NULL,
-            projetor TEXT NOT NULL,
-            computadores INTEGER DEFAULT 0,
-            status TEXT DEFAULT 'Disponível'
-        )
-    """)
-
-    # Tabela de usuários
+    # Tabela de usuários com a coluna 'departamento'
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
             senha TEXT NOT NULL,
-            tipo TEXT NOT NULL
+            tipo TEXT NOT NULL,
+            departamento TEXT DEFAULT 'Geral'
         )
     """)
+    # ... (demais tabelas)
+    conexao.commit()
+    conexao.close()
 
-    # Tabela de reservas
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS reservas (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            professor_id INTEGER NOT NULL,
-            sala_id INTEGER NOT NULL,
-            data TEXT NOT NULL,
-            horario_inicio TEXT NOT NULL,
-            horario_fim TEXT NOT NULL,
-            finalidade TEXT NOT NULL,
-            status TEXT DEFAULT 'Pendente',
-            FOREIGN KEY (professor_id) REFERENCES usuarios(id),
-            FOREIGN KEY (sala_id) REFERENCES salas(id)
-        )
-    """)
+def criar_usuarios_iniciais():
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    usuarios = [
+        ("Administrador", "admin@faculdade.com", "1234", "Administrador", "TI / Administração"),
+        ("João da Silva", "joao@faculdade.com", "1234", "Professor", "Departamento de Computação")
+    ]
+
+    for usuario in usuarios:
+        try:
+            cursor.execute("""
+                INSERT INTO usuarios (nome, email, senha, tipo, departamento)
+                VALUES (?, ?, ?, ?, ?)
+            """, usuario)
+        except sqlite3.IntegrityError:
+            pass
+
     conexao.commit()
     conexao.close()
 

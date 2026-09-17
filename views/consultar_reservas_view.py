@@ -6,18 +6,17 @@ from models.salas_model import SalasModel
 def render_consultar_reservas():
     st.title("🔍 Consultar Reservas")
     
-    # 1. Recupera o usuário e padroniza a busca do perfil
+    #  busca do perfil
     usuario_logado = st.session_state.get("usuario_logado", {})
     
     perfil = ""
     usuario_id = 1
 
     if isinstance(usuario_logado, dict):
-        # Tenta buscar em 'perfil', 'tipo' ou 'funcao' 
         perfil = str(usuario_logado.get("perfil") or usuario_logado.get("tipo") or usuario_logado.get("funcao") or "").lower()
         usuario_id = usuario_logado.get("id", 1)
 
-    # Verifica estritamente se é Administrador
+    # Verifica  se é Administrador
     eh_admin = perfil in ["administrador", "admin"]
 
     reservas_model = ReservasModel()
@@ -33,12 +32,19 @@ def render_consultar_reservas():
         st.info("Nenhuma reserva encontrada.")
         return
 
-    # Tabela de leitura para todos
+    # exibi as reservas
     df = pd.DataFrame(reservas, columns=["ID", "Solicitante", "Sala", "Data", "Início", "Término", "Finalidade", "Status"])
     df["Data"] = pd.to_datetime(df["Data"]).dt.strftime("%d/%m/%Y")
     
     st.subheader("📋 Todas as Reservas" if eh_admin else "📋 Minhas Reservas")
-    st.dataframe(df[["Sala", "Data", "Início", "Término", "Finalidade"]], hide_index=True, use_container_width=True)
+
+    # Se for Administrador
+    if eh_admin:
+        colunas_exibir = ["Solicitante", "Sala", "Data", "Início", "Término", "Finalidade", "Status"]
+    else:
+        colunas_exibir = ["Sala", "Data", "Início", "Término", "Finalidade", "Status"]
+
+    st.dataframe(df[colunas_exibir], hide_index=True, use_container_width=True)
 
     # =========================================================
     # APENAS ADMINISTRADOR
@@ -47,7 +53,7 @@ def render_consultar_reservas():
         st.divider()
         st.subheader("🛠️ Gerenciar Reserva (Editar / Excluir)")
 
-        opcoes_reservas = {f"ID #{r[0]} — {r[2]} ({r[3]} de {r[4]} às {r[5]})": r for r in reservas}
+        opcoes_reservas = {f"ID #{r[0]} — Sala: {r[2]} | Prof. {r[1]} ({r[3]} de {r[4]} às {r[5]})": r for r in reservas}
         reserva_selecionada = st.selectbox("Selecione uma reserva para alterar:", list(opcoes_reservas.keys()))
 
         if reserva_selecionada:
@@ -67,7 +73,7 @@ def render_consultar_reservas():
                         break
 
                 sala_id = st.selectbox("Sala", list(opcoes_salas.keys()), index=idx_sala)
-                data = st.date_input("Data", value=pd.to_datetime(dados_reserva[3]))
+                data = st.date_input("Data", value=pd.to_datetime(dados_reserva[3], dayfirst=True))
                 inicio = st.time_input("Horário Início", value=pd.to_datetime(dados_reserva[4]).time())
                 termino = st.time_input("Horário Término", value=pd.to_datetime(dados_reserva[5]).time())
                 finalidade = st.text_input("Finalidade", value=dados_reserva[6])

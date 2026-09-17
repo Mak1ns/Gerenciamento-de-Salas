@@ -8,7 +8,7 @@ def render_gerenciar_salas():
     st.markdown("<h2 style='color: #FF6B00;'>⚙️ Gerenciar Salas</h2>", unsafe_allow_html=True)
     st.write("Cadastre novas salas ou remova as existentes do sistema.")
 
-    #  Cadastro de Nova Sala 
+    # --- Formulário de Cadastro de Nova Sala ---
     with st.form("form_cadastrar_sala"):
         st.subheader("➕ Adicionar Nova Sala")
         
@@ -43,7 +43,7 @@ def render_gerenciar_salas():
 
     st.divider()
 
-    # Listagem e Exclusão de Salas 
+    # --- Listagem e Exclusão de Salas Cadastradas ---
     st.subheader("📋 Salas Cadastradas no Sistema")
     
     try:
@@ -64,7 +64,6 @@ def render_gerenciar_salas():
                         st.caption(f"Capacidade: {capacidade} | Projetor: {projetor} | Computadores: {computadores}")
                     
                     with col_btn:
-                        # exclusão de sala
                         if st.button("Excluir", key=f"del_sala_{sala_id}"):
                             conexao = conectar()
                             cursor = conexao.cursor()

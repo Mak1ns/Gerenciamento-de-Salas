@@ -3,7 +3,7 @@ from pathlib import Path
 
 class ReservasModel:
     def __init__(self):
-        # Mantém o caminho correto apontando para o seu reservas.db original
+        
         base_dir = Path(__file__).resolve().parent.parent
         self.db_path = base_dir / "reservas.db"
 

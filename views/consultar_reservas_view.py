@@ -13,7 +13,7 @@ def render_consultar_reservas():
     usuario_id = 1
 
     if isinstance(usuario_logado, dict):
-        # Tenta buscar em 'perfil', 'tipo' ou 'funcao' e converte para minúsculo
+        # Tenta buscar em 'perfil', 'tipo' ou 'funcao' 
         perfil = str(usuario_logado.get("perfil") or usuario_logado.get("tipo") or usuario_logado.get("funcao") or "").lower()
         usuario_id = usuario_logado.get("id", 1)
 
@@ -23,7 +23,7 @@ def render_consultar_reservas():
     reservas_model = ReservasModel()
     salas_model = SalasModel()
 
-    # Se for Admin, busca todas. Se for Professor/Comum, busca apenas as dele.
+    # Se for Admin busca todas. Se for Professor busca apenas as dele.
     if eh_admin:
         reservas = reservas_model.listar_todas()
     else:
@@ -33,7 +33,7 @@ def render_consultar_reservas():
         st.info("Nenhuma reserva encontrada.")
         return
 
-    # Tabela visível para todos (somente leitura)
+    # Tabela de leitura para todos
     df = pd.DataFrame(reservas, columns=["ID", "Solicitante", "Sala", "Data", "Início", "Término", "Finalidade", "Status"])
     df["Data"] = pd.to_datetime(df["Data"]).dt.strftime("%d/%m/%Y")
     
@@ -41,7 +41,7 @@ def render_consultar_reservas():
     st.dataframe(df[["Sala", "Data", "Início", "Término", "Finalidade"]], hide_index=True, use_container_width=True)
 
     # =========================================================
-    # BLOCO EXCLUSIVO: APENAS SE FOR ADMINISTRADOR
+    # APENAS ADMINISTRADOR
     # =========================================================
     if eh_admin:
         st.divider()

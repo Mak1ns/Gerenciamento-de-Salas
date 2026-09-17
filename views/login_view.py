@@ -2,7 +2,7 @@ import streamlit as st
 from controllers.auth_controller import AuthController
 
 def render_login(form_key="form_login"):
-    st.markdown("<h1 style='text-align: center; margin-bottom: 0; color: #FFA500'>ÁTILA</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; margin-bottom: 0; color: #FFA500'>⚡ÁTILA</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #FFA500'>Reserva de Salas - UniSapiens</p>", unsafe_allow_html=True)
 
     st.write("") # Espaçamento
@@ -21,7 +21,6 @@ def render_login(form_key="form_login"):
 
             if is_authenticated:
                 st.session_state["autenticado"] = True
-                # CORREÇÃO PRINCIPAL: Salvar o dicionário 'usuario' inteiro, e não apenas o 'usuario["nome"]'
                 st.session_state["usuario_logado"] = usuario 
                 st.success("Login efetuado com sucesso!")
                 st.rerun()

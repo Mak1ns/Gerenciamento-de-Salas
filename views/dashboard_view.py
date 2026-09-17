@@ -22,11 +22,11 @@ def render_dasboard():
     # Opções do menu
     menu = st.sidebar.radio(
         "Navegação",
-        ["🏠 Início / Visão Geral", "📅 Reserva de Salas", "🔍 Consultar Reservas", "⚙️ Gerenciar Salas (Admin)"]
+        ["Início / Visão Geral", "📅 Reserva de Salas", "🔍 Consultar Reservas", "⚙️ Gerenciar Salas (Admin)"]
     )
 
     # Roteamento de telas
-    if menu == "🏠 Início / Visão Geral":
+    if menu == "Início / Visão Geral":
         # Chama a função que constrói os cards e tabelas
         render_visao_geral()
 

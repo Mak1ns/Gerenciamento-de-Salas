@@ -39,7 +39,7 @@ def render_reserva_salas():
         
         col_data, col_vazia = st.columns([1, 1])
         with col_data:
-            # FORMATO DA DATA ALTERADO AQUI: format="DD/MM/YYYY"
+        
             data_reserva = st.date_input(
                 "Data da Reserva", 
                 min_value=datetime.date.today(),

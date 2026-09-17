@@ -1,6 +1,11 @@
 import streamlit as st
+
 from views.login_view import render_login
 from views.dashboard_view import render_dasboard
+from banco import criar_banco, criar_usuarios_iniciais
+
+criar_banco()
+criar_usuarios_iniciais()
 
 st.set_page_config(
     page_title="ÁTILA",

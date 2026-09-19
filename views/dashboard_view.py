@@ -5,16 +5,17 @@ from views.visao_geral_view import render_visao_geral
 from views.gerenciar_salas_view import render_gerenciar_salas
 
 def render_dasboard():
-    #  dados do usuário logado
+    # usuário logado
     usuario_logado = st.session_state.get("usuario_logado", {})
     if isinstance(usuario_logado, dict):
         nome = usuario_logado.get("nome", "Usuário")
         perfil = usuario_logado.get("perfil", usuario_logado.get("tipo", "Perfil não definido"))
+        departamento = usuario_logado.get("departamento", "Departamento não definido")
     else:
         nome = "Usuário"
         perfil = "Perfil não definido"
 
-    # Barra lateral
+    
     st.sidebar.title("ÁTILA")
     st.sidebar.markdown(f"Bem-vindo, **{nome}**!")
     st.sidebar.markdown(f"Perfil: **{perfil}**")

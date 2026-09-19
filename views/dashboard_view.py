@@ -3,7 +3,7 @@ from views.reservas_view import render_reserva_salas
 from views.consultar_reservas_view import render_consultar_reservas
 from views.visao_geral_view import render_visao_geral 
 
-def render_dasboard():
+def render_dashboard():
     # usuário logado
     usuario_logado = st.session_state.get("usuario_logado", {})
     if isinstance(usuario_logado, dict):

@@ -1,7 +1,7 @@
 import streamlit as st
 
 from views.login_view import render_login
-from views.dashboard_view import render_dasboard
+from views.dashboard_view import render_dashboard
 from banco import criar_banco, criar_usuarios_iniciais, criar_salas_iniciais
 
 criar_banco()
@@ -24,7 +24,7 @@ def main():
     if not st.session_state["autenticado"]:
         render_login()
     else:
-        render_dasboard()
+        render_dashboard()
 
 if __name__ == "__main__":
     main()

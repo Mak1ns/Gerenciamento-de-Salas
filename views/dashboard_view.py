@@ -14,7 +14,7 @@ def render_dasboard():
     else:
         nome = "Usuário"
         perfil = "Perfil não definido"
-
+        departamento = "Departamento não definido"
     
     st.sidebar.title("ÁTILA")
     st.sidebar.markdown(f"Bem-vindo, **{nome}**!")

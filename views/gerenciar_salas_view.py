@@ -8,10 +8,10 @@ def render_gerenciar_salas():
     st.markdown("<h2 style='color: #FF6B00;'>⚙️ Gerenciar Salas</h2>", unsafe_allow_html=True)
     st.write("Cadastre novas salas ou remova as existentes do sistema.")
 
-    # --- Formulário de Cadastro de Nova Sala ---
+    # Cadastro de Nova Sala
     with st.form("form_cadastrar_sala"):
         st.subheader("➕ Adicionar Nova Sala")
-        
+
         nome = st.text_input("Nome da Sala / Laboratório")
         col1, col2 = st.columns(2)
         with col1:
@@ -43,9 +43,9 @@ def render_gerenciar_salas():
 
     st.divider()
 
-    # --- Listagem e Exclusão de Salas Cadastradas ---
+    # Listagem e Exclusão de Salas Cadastradas
     st.subheader("📋 Salas Cadastradas no Sistema")
-    
+
     try:
         conexao = conectar()
         cursor = conexao.cursor()
@@ -56,22 +56,30 @@ def render_gerenciar_salas():
         if salas:
             for sala in salas:
                 sala_id, nome, capacidade, localizacao, projetor, computadores = sala
-                
+
                 with st.container():
                     col_info, col_btn = st.columns([4, 1])
                     with col_info:
                         st.markdown(f"**🏢 {nome}** ({localizacao})")
                         st.caption(f"Capacidade: {capacidade} | Projetor: {projetor} | Computadores: {computadores}")
-                    
+
                     with col_btn:
                         if st.button("Excluir", key=f"del_sala_{sala_id}"):
-                            conexao = conectar()
-                            cursor = conexao.cursor()
-                            cursor.execute("DELETE FROM salas WHERE id = ?", (sala_id,))
-                            conexao.commit()
-                            conexao.close()
-                            st.success(f"Sala '{nome}' removida!")
-                            st.rerun()
+                            try:
+                                conexao_del = conectar()
+                                cursor_del = conexao_del.cursor()
+                                cursor_del.execute("SELECT COUNT(*) FROM reservas WHERE sala_id = ?", (sala_id,))
+                                tem_reservas = cursor_del.fetchone()[0]
+                                if tem_reservas > 0:
+                                    st.warning(f"'{nome}' tem {tem_reservas} reserva(s) vinculada(s). Exclusão bloqueada.")
+                                else:
+                                    cursor_del.execute("DELETE FROM salas WHERE id = ?", (sala_id,))
+                                    conexao_del.commit()
+                                    st.success(f"Sala '{nome}' removida!")
+                                    st.rerun()
+                                conexao_del.close()
+                            except Exception as e:
+                                st.error(f"Erro ao excluir sala: {e}")
                     st.markdown("---")
         else:
             st.info("Nenhuma sala cadastrada no momento.")

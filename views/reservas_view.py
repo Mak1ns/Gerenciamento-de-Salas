@@ -40,8 +40,17 @@ def render_reserva_salas():
     sala_info = opcoes_salas[sala_label]
 
     col_projetor, col_som = st.columns(2)
-    col_projetor.markdown(f"📽️ **Tem projetor:** {'✅ Sim' if sala_info['tem_projetor'] else '❌ Não'}")
-    col_som.markdown(f"🔊 **Caixa de som:** {'✅ Sim' if sala_info['tem_caixa_som'] else '❌ Não'}")
+
+
+    if sala_info['tem_projetor']:
+        col_projetor.markdown("📽️ **Tem projetor:**  Sim")
+    else:
+        col_projetor.markdown("📽️ **Tem projetor:**  Não")
+
+    if sala_info['tem_caixa_som']:
+        col_som.markdown("🔊 **Caixa de som:**  Sim")
+    else:
+        col_som.markdown("🔊 **Caixa de som:**  Não")
 
     with st.form("form_solicitar_reserva"):
         st.info(f"**Solicitante:** {nome_usuario}")

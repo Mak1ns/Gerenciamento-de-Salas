@@ -86,7 +86,10 @@ def criar_salas_iniciais():
     if cursor.fetchone()[0] == 0:
         salas = [
             ("Sala 101", 40, 0, True, False, "Ativa"),
-            ("Laboratório de Info", 30, 30, True, True, "Ativa")
+            ("Laboratório de Informatica", 30, 30, True, True, "Ativa"),
+            ("Sala Nova york", 20, 0, False, False, "Ativa"),
+            ("Sala de Reuniões", 15, 0, True, True, "Ativa"),
+            ("Laboratório de Robótica", 25, 10, True, True, "Ativa")
         ]
         cursor.executemany("INSERT INTO salas (nome, capacidade, computadores, projetor, caixa_som, status) VALUES (?, ?, ?, ?, ?, ?)", salas)
 

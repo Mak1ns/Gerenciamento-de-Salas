@@ -58,13 +58,10 @@ def criar_banco():
 
 def criar_usuarios_iniciais():
     conexao = conectar()
-    cursor = conexao.cursor()
-
-    # Puxa a senha secreta do Streamlit Cloud
-    senha_admin = st.secrets.get("SENHA_ADMIN", "1234")
+    cursor = conexao.cursor()  
 
     usuarios = [
-        ("Administrador Geral", "admin@unisapiens.edu", senha_admin, "Administrador", "Gestão de TI"),
+        ("Administrador Geral", "admin@unisapiens.edu", "1234", "Administrador", "Gestão de TI"),
         ("Prof. Átila", "atila@unisapiens.edu", "1234", "Professor", "Engenharia do Conhecimento"),
         ("Profa. Mariana Costa", "mariana.costa@unisapiens.edu", "1234", "Professor", "Ciência da Computação")
     ]

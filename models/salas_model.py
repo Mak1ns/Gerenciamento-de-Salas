@@ -13,7 +13,7 @@ class SalasModel:
     def listar_todos(self):
         conexao = self.conectar()
         cursor = conexao.cursor()
-        cursor.execute("SELECT id, nome, capacidade, localizacao, projetor, computadores, status FROM salas")
+        cursor.execute("SELECT id, nome, capacidade, computadores, projetor, caixa_som, status FROM salas")
         salas = cursor.fetchall()
         conexao.close()
         return salas
@@ -22,7 +22,7 @@ class SalasModel:
         conexao = self.conectar()
         cursor = conexao.cursor()
         
-        cursor.execute("SELECT id, nome, capacidade, localizacao FROM salas WHERE status = 'Disponível'")
+        cursor.execute("SELECT id, nome, capacidade, computadores, projetor, caixa_som FROM salas WHERE status = 'Ativa'")
         salas = cursor.fetchall()
         
         conexao.close()
@@ -32,7 +32,7 @@ class SalasModel:
         conexao = self.conectar()
         cursor = conexao.cursor()
         cursor.execute(
-            "SELECT id, nome, capacidade, localizacao, projetor, computadores, status FROM salas WHERE id = ?", 
+            "SELECT id, nome, capacidade, computadores, projetor, caixa_som, status FROM salas WHERE id = ?", 
             (sala_id,)
         )
         resultado = cursor.fetchone()
@@ -43,9 +43,9 @@ class SalasModel:
                 "id": resultado[0],
                 "nome": resultado[1],
                 "capacidade": resultado[2],
-                "localizacao": resultado[3],
+                "computadores": resultado[3],
                 "projetor": resultado[4],
-                "computadores": resultado[5],
+                "caixa_som": resultado[5],
                 "status": resultado[6]
             }
         return None
@@ -54,7 +54,7 @@ class SalasModel:
         conexao = self.conectar()
         cursor = conexao.cursor()
         cursor.execute(
-            "SELECT id, nome, capacidade, localizacao, projetor, computadores, status FROM salas WHERE nome LIKE ?", 
+            "SELECT id, nome, capacidade, computadores, projetor, caixa_som, status FROM salas WHERE nome LIKE ?", 
             (f"%{nome_sala}%",)
         )
         salas = cursor.fetchall()

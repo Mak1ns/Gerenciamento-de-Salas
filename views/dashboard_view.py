@@ -2,20 +2,17 @@ import streamlit as st
 from views.reservas_view import render_reserva_salas
 from views.consultar_reservas_view import render_consultar_reservas
 from views.visao_geral_view import render_visao_geral 
-from views.gerenciar_salas_view import render_gerenciar_salas
 
 def render_dasboard():
     # usuário logado
     usuario_logado = st.session_state.get("usuario_logado", {})
     if isinstance(usuario_logado, dict):
         nome = usuario_logado.get("nome", "Usuário")
-        perfil = usuario_logado.get("perfil", usuario_logado.get("tipo", "Perfil não definido"))
-        departamento = usuario_logado.get("departamento", "Departamento não definido")
+        perfil = usuario_logado.get("perfil", usuario_logado.get("tipo", "Professor(a)"))
     else:
         nome = "Usuário"
-        perfil = "Perfil não definido"
-        departamento = "Departamento não definido"
-    
+        perfil = "Professor(a)"
+
     st.sidebar.title("ÁTILA")
     st.sidebar.markdown(f"Bem-vindo, **{nome}**!")
     st.sidebar.markdown(f"Perfil: **{perfil}**")
@@ -39,12 +36,12 @@ def render_dasboard():
         render_consultar_reservas()
 
     elif menu == "⚙️ Gerenciar Salas (Admin)":
-        if perfil == "Administrador":
-            render_gerenciar_salas()
-        else: st.warning("Acesso negado. Apenas administradores podem acessar esta seção.")
+        
+
     # Botão de Logout
-    st.sidebar.divider()
-    if st.sidebar.button("Sair / Logout"):
+        st.sidebar.divider()
+        
+    if  st.sidebar.button("Sair / Logout"):
         st.session_state["autenticado"] = False
         st.session_state["usuario_logado"] = None
         st.rerun()

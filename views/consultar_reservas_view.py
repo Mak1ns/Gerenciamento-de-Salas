@@ -16,13 +16,13 @@ def render_consultar_reservas():
         perfil = str(usuario_logado.get("perfil") or usuario_logado.get("tipo") or usuario_logado.get("funcao") or "").lower()
         usuario_id = usuario_logado.get("id", 1)
 
-    # Verifica  se é Administrador
+    # Verificaçao de perfil administrador
     eh_admin = perfil in ["administrador", "admin"]
 
     reservas_model = ReservasModel()
     salas_model = SalasModel()
 
-    # Se for Admin busca todas. Se for Professor busca apenas as dele.
+
     if eh_admin:
         reservas = reservas_model.listar_todas()
     else:
@@ -38,7 +38,7 @@ def render_consultar_reservas():
     
     st.subheader("📋 Todas as Reservas" if eh_admin else "📋 Minhas Reservas")
 
-    # Se for Administrador
+    # Administrador
     if eh_admin:
         colunas_exibir = ["Solicitante", "Sala", "Data", "Início", "Término", "Finalidade", "Status"]
     else:
@@ -46,9 +46,7 @@ def render_consultar_reservas():
 
     st.dataframe(df[colunas_exibir], hide_index=True, use_container_width=True)
 
-    # =========================================================
-    # APENAS ADMINISTRADOR
-    # =========================================================
+    # ADMINISTRADOR
     if eh_admin:
         st.divider()
         st.subheader("🛠️ Gerenciar Reserva (Editar / Excluir)")

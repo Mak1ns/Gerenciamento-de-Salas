@@ -5,7 +5,7 @@ def render_login(form_key="form_login"):
     st.markdown("<h1 style='text-align: center; margin-bottom: 0; color: #FFA500'>⚡ÁTILA</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #FFA500'>Reserva de Salas - UniSapiens</p>", unsafe_allow_html=True)
 
-    st.write("") # Espaçamento
+    st.write("") 
     
     col1, col2, col3 = st.columns([1, 1.2, 1])
  
@@ -13,9 +13,9 @@ def render_login(form_key="form_login"):
         with st.form(form_key):
             email = st.text_input("E-mail")
             senha = st.text_input("Senha", type="password")
-            btn_entrar = st.form_submit_button("Entrar")
+            button_entrar = st.form_submit_button("Entrar")
 
-        if btn_entrar:
+        if button_entrar:
             controller = AuthController()
             is_authenticated, usuario, mensagem = controller.tentar_login(email, senha)
 

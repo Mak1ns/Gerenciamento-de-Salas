@@ -5,30 +5,29 @@ from models.reservas_model import ReservasModel
 from models.salas_model import SalasModel
 
 def render_visao_geral():
-    # Recupera os dados de quem está logado
+    
     usuario_logado = st.session_state.get("usuario_logado", {})
     if isinstance(usuario_logado, dict):
         nome = usuario_logado.get("nome", "Usuário")
-        perfil = usuario_logado.get("perfil", usuario_logado.get("tipo", "Professor"))
+        perfil = usuario_logado.get("perfil", usuario_logado.get("tipo", "Professor(a)"))
         usuario_id = usuario_logado.get("id", 1)
     else:
         nome = "Usuário"
-        perfil = "Professor"
+        perfil = "Professor(a)"
         usuario_id = 1
 
     st.markdown(f"<h2 style='color: #FFA500;'>📊 Bem-vindo(a), {nome}!</h2>", unsafe_allow_html=True)
-    st.write("Visão geral do sistema **ÁTILA**.")
     st.divider()
 
     reservas_model = ReservasModel()
     salas_model = SalasModel()
 
-    #Compara Data com o banco de dados
+
     hoje_str = datetime.date.today().strftime("%Y-%m-%d")
 
-    # ==========================================
+   
     # DASHBOARD DO ADMINISTRADOR
-    # ==========================================
+    
     if perfil == "Administrador":
         todas_reservas = reservas_model.listar_todas()
         todas_salas = salas_model.listar_todos()
@@ -43,7 +42,7 @@ def render_visao_geral():
         col3.metric("🔥 Reservas Hoje", len(reservas_hoje))
         
         st.divider()
-        st.subheader("📅 Acontecendo Hoje na Instituição")
+        st.subheader("📅 Agendamentos Realizados Hoje")
         
         if reservas_hoje:
             df = pd.DataFrame(reservas_hoje, columns=["ID", "Solicitante", "Sala", "Data", "Início", "Término", "Finalidade", "Status"])
@@ -53,29 +52,15 @@ def render_visao_geral():
         else:
             st.info("Nenhuma reserva programada para hoje.")
             
-    # ==========================================
+
     # DASHBOARD DO PROFESSOR 
-    # ==========================================
+
     else:
         minhas_reservas = reservas_model.listar_por_usuario(usuario_id)
         
-        # Filtra  reservas a partir de hoje
-        reservas_futuras = [r for r in minhas_reservas if r[3] >= hoje_str]
+    
+        reservas_hoje = [r for r in minhas_reservas if r[3] == hoje_str]
         
-        # Exibição de KPIs
+    
         col1, col2 = st.columns(2)
         col1.metric("📌 Meu Total de Reservas", len(minhas_reservas))
-        col2.metric("⏳ Meus Próximos Agendamentos", len(reservas_futuras))
-
-        st.divider()
-        st.subheader("🚀 Minha Agenda")
-        
-        if reservas_futuras:
-            df = pd.DataFrame(reservas_futuras, columns=["ID", "Solicitante", "Sala", "Data", "Início", "Término", "Finalidade", "Status"])
-            df = df.sort_values(by=["Data", "Início"])
-            df["Data"] = pd.to_datetime(df["Data"]).dt.strftime("%d/%m/%Y")
-            
-            # Mostra a agenda pessoal do professor
-            st.dataframe(df[["Sala", "Data", "Início", "Término", "Finalidade"]], hide_index=True, use_container_width=True)
-        else:
-            st.info("Você não possui agendamentos futuros. Vá no menu lateral para reservar uma sala.")

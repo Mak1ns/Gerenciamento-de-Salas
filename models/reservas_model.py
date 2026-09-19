@@ -10,11 +10,34 @@ class ReservasModel:
     def conectar(self):
         return sqlite3.connect(self.db_path)
 
-    def criar_reserva(self, professor_id, sala_id, data, horario_inicio, horario_fim, finalidade):
+    def existe_conflito(self, sala_id, data, horario_inicio, horario_fim):
         try:
             conexao = self.conectar()
             cursor = conexao.cursor()
-            #  status 'Aprovada'
+           
+            cursor.execute("""
+                SELECT COUNT(*) FROM reservas
+                WHERE sala_id = ?
+                  AND data = ?
+                  AND status != 'Cancelada'
+                  AND horario_inicio < ?
+                  AND horario_fim > ?
+            """, (sala_id, str(data), str(horario_fim), str(horario_inicio)))
+            qtd = cursor.fetchone()[0]
+            conexao.close()
+            return qtd > 0
+        except Exception as e:
+            print(f"Erro ao verificar conflito: {e}")
+        
+            return True
+
+    def criar_reserva(self, professor_id, sala_id, data, horario_inicio, horario_fim, finalidade):
+        if self.existe_conflito(sala_id, data, horario_inicio, horario_fim):
+            return False, "Já existe uma reserva para esta sala nesse horário."
+        try:
+            conexao = self.conectar()
+            cursor = conexao.cursor()
+
             cursor.execute("""
                 INSERT INTO reservas (professor_id, sala_id, data, horario_inicio, horario_fim, finalidade, status)
                 VALUES (?, ?, ?, ?, ?, ?, 'Aprovada')

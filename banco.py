@@ -62,7 +62,7 @@ def criar_usuarios_iniciais():
 
     usuarios = [
         ("Administrador Geral", "admin@unisapiens.edu", "1234", "Administrador", "Gestão de TI"),
-        ("Prof. Átila", "atila@unisapiens.edu", "1234", "Professor", "Engenharia do Conhecimento"),
+        ("Prof. Átila", "atila@unisapiens.edu", "1234", "Professor(a)", "Engenharia do Conhecimento"),
         ("Profa. Mariana Costa", "mariana.costa@unisapiens.edu", "1234", "Professor", "Ciência da Computação")
     ]
 

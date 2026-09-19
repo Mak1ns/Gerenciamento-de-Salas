@@ -21,7 +21,7 @@ def render_dasboard():
     # menu
     menu = st.sidebar.radio(
         "Navegação",
-        ["🏠 Início / Visão Geral", "📅 Reserva de Salas", "🔍 Consultar Reservas", "⚙️ Gerenciar Salas (Admin)"]
+        ["🏠 Início / Visão Geral", "📅 Reserva de Salas", "🔍 Consultar Reservas"]
     )
 
     
@@ -34,10 +34,7 @@ def render_dasboard():
 
     elif menu == "🔍 Consultar Reservas":
         render_consultar_reservas()
-
-    elif menu == "⚙️ Gerenciar Salas (Admin)":
         
-
     # Botão de Logout
         st.sidebar.divider()
         

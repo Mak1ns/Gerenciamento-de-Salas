@@ -21,8 +21,10 @@ class SalasModel:
     def listar_salas_disponiveis(self):
         conexao = self.conectar()
         cursor = conexao.cursor()
+        
         cursor.execute("SELECT id, nome, capacidade, localizacao FROM salas WHERE status = 'Disponível'")
         salas = cursor.fetchall()
+        
         conexao.close()
         return salas
 

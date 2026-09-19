@@ -8,85 +8,90 @@ BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "reservas.db"
 
 
-
 def conectar():
-    conexao = sqlite3.connect(DB_PATH)
-    conexao.execute("PRAGMA foreign_keys = ON")
-    return conexao
-
+    return sqlite3.connect(DB_PATH)
 
 def criar_banco():
-    with conectar() as conexao:
-        cursor = conexao.cursor()
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS salas (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome TEXT NOT NULL UNIQUE,
-                capacidade INTEGER NOT NULL CHECK(capacidade > 0),
-                localizacao TEXT NOT NULL,
-                projetor TEXT NOT NULL DEFAULT 'Não' CHECK(projetor IN ('Sim','Não')),
-                computadores INTEGER NOT NULL DEFAULT 0 CHECK(computadores >= 0),
-                status TEXT NOT NULL DEFAULT 'Disponível' CHECK(status IN ('Disponível','Indisponível'))
-            )
-        """)
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS professores (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome TEXT NOT NULL,
-                email TEXT NOT NULL UNIQUE,
-                departamento TEXT NOT NULL
-            )
-        """)
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS usuarios (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome TEXT NOT NULL,
-                email TEXT NOT NULL UNIQUE,
-                senha TEXT NOT NULL,
-                tipo TEXT NOT NULL CHECK(tipo IN ('Administrador','Professor'))
-            )
-        """)
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS reservas (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                professor_id INTEGER NOT NULL,
-                sala_id INTEGER NOT NULL,
-                data TEXT NOT NULL,
-                horario_inicio TEXT NOT NULL,
-                horario_fim TEXT NOT NULL,
-                finalidade TEXT NOT NULL,
-                status TEXT NOT NULL DEFAULT 'Pendente' CHECK(status IN ('Pendente','Aprovada','Recusada','Cancelada')),
-                FOREIGN KEY (professor_id) REFERENCES professores(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-                FOREIGN KEY (sala_id) REFERENCES salas(id) ON UPDATE CASCADE ON DELETE RESTRICT
-            )
-        """)
-        conexao.commit()
+    conexao = conectar()
+    cursor = conexao.cursor()
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            senha TEXT NOT NULL,
+            tipo TEXT NOT NULL,
+            departamento TEXT DEFAULT 'Geral'
+        )
+    """)
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS salas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            capacidade INTEGER,
+            computadores INTEGER,
+            projetor BOOLEAN,
+            caixa_som BOOLEAN,
+            status TEXT DEFAULT 'Ativa'
+        )
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS reservas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            professor_id INTEGER,
+            sala_id INTEGER,
+            data TEXT,
+            horario_inicio TEXT,
+            horario_fim TEXT,
+            finalidade TEXT,
+            status TEXT DEFAULT 'Confirmada',
+            FOREIGN KEY (professor_id) REFERENCES usuarios(id),
+            FOREIGN KEY (sala_id) REFERENCES salas(id)
+        )
+    """)
+
+    conexao.commit()
+    conexao.close()
 
 def criar_usuarios_iniciais():
-    criar_banco()
-    with conectar() as conexao:
-        
-        senha_admin = st.secrets.get("SENHA_ADMIN", "senha_temporaria")
-        
-        usuarios = [
-            ("Administrador", "admin@faculdade.com", senha_admin, "Administrador", "Gestão de TI"),
-            ("João da Silva", "joao@faculdade.com", "1234", "Professor","Engenharia da Computação"),
-            ("Maria Oliveira", "maria@faculdade.com", "5678", "Professor","Ciencia da Computação"),
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    # Puxa a senha secreta do Streamlit Cloud
+    senha_admin = st.secrets.get("SENHA_ADMIN", "1234")
+
+    usuarios = [
+        ("Administrador Geral", "admin@unisapiens.edu", senha_admin, "Administrador", "Gestão de TI"),
+        ("Prof. Átila", "atila@unisapiens.edu", "1234", "Professor", "Engenharia do Conhecimento"),
+        ("Profa. Mariana Costa", "mariana.costa@unisapiens.edu", "1234", "Professor", "Ciência da Computação")
+    ]
+
+    for u in usuarios:
+        try:
+            cursor.execute("INSERT INTO usuarios (nome, email, senha, tipo, departamento) VALUES (?, ?, ?, ?, ?)", u)
+        except sqlite3.IntegrityError:
+            pass
+
+    conexao.commit()
+    conexao.close()
+
+def criar_salas_iniciais():
+    conexao = conectar()
+    cursor = conexao.cursor()
+    
+    cursor.execute("SELECT COUNT(*) FROM salas")
+    if cursor.fetchone()[0] == 0:
+        salas = [
+            ("Sala 101", 40, 0, True, False, "Ativa"),
+            ("Laboratório de Info", 30, 30, True, True, "Ativa")
         ]
-        for usuario in usuarios:
-            conexao.execute(
-                "INSERT OR IGNORE INTO usuarios (nome,email,senha,tipo,departamento) VALUES (?,?,?,?,?)",
-                usuario,
-            )
-        conexao.execute(
-            """
-            INSERT OR IGNORE INTO professores (nome,email,departamento)
-            VALUES ('João da Silva','joao@faculdade.com','Curso: Engenharia da Computação')
-            """
-        )
-        conexao.commit()
+        cursor.executemany("INSERT INTO salas (nome, capacidade, computadores, projetor, caixa_som, status) VALUES (?, ?, ?, ?, ?, ?)", salas)
+
+    conexao.commit()
+    conexao.close()
 
 
 if __name__ == "__main__":

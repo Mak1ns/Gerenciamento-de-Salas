@@ -25,17 +25,26 @@ def render_reserva_salas():
         if not salas_todas:
             st.error("Nenhuma sala cadastrada no banco de dados.")
             return
-        salas = [(s[0], s[1], s[2], s[3]) for s in salas_todas]
+        salas = [(s[0], s[1], s[2], s[3], s[4], s[5]) for s in salas_todas]
 
     opcoes_salas = {
-        f"{sala[1]} — {sala[3]} (Capacidade: {sala[2]} pessoas)": sala[0] 
+        f"{sala[1]} — {sala[3]} (Capacidade: {sala[2]} pessoas)": {
+            "id": sala[0],
+            "tem_projetor": bool(sala[4]),
+            "tem_caixa_som": bool(sala[5]),
+        }
         for sala in salas
     }
 
+    sala_label = st.selectbox("Selecione a Sala", list(opcoes_salas.keys()))
+    sala_info = opcoes_salas[sala_label]
+
+    col_projetor, col_som = st.columns(2)
+    col_projetor.markdown(f"📽️ **Tem projetor:** {'✅ Sim' if sala_info['tem_projetor'] else '❌ Não'}")
+    col_som.markdown(f"🔊 **Caixa de som:** {'✅ Sim' if sala_info['tem_caixa_som'] else '❌ Não'}")
+
     with st.form("form_solicitar_reserva"):
         st.info(f"**Solicitante:** {nome_usuario}")
-        
-        sala_label = st.selectbox("Selecione a Sala", list(opcoes_salas.keys()))
         
         col_data, col_vazia = st.columns([1, 1])
         with col_data:
@@ -51,7 +60,7 @@ def render_reserva_salas():
             horario_inicio = st.time_input("Horário de Início", datetime.time(8, 0))
         with col_fim:
             horario_fim = st.time_input("Horário de Término", datetime.time(10, 0))
-
+        
         finalidade = st.text_area(
             "Finalidade da Reserva", 
             placeholder="Ex: Aula prática de Engenharia do Conhecimento, Apresentação de TCC, etc."
@@ -65,7 +74,7 @@ def render_reserva_salas():
             elif horario_inicio >= horario_fim:
                 st.error("O horário de término deve ser posterior ao horário de início.")
             else:
-                sala_id_selecionada = opcoes_salas[sala_label]
+                sala_id_selecionada = sala_info["id"]
                 
                 reserva_model = ReservasModel()
                 sucesso, mensagem = reserva_model.criar_reserva(

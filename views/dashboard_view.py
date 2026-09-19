@@ -39,8 +39,9 @@ def render_dasboard():
         render_consultar_reservas()
 
     elif menu == "⚙️ Gerenciar Salas (Admin)":
-        render_gerenciar_salas()
-
+        if perfil == "Administrador":
+            render_gerenciar_salas()
+        else: st.warning("Acesso negado. Apenas administradores podem acessar esta seção.")
     # Botão de Logout
     st.sidebar.divider()
     if st.sidebar.button("Sair / Logout"):

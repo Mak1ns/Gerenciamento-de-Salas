@@ -34,6 +34,7 @@ def criar_banco():
             computadores INTEGER,
             projetor BOOLEAN,
             caixa_som BOOLEAN,
+            andar INTEGER DEFAULT 0,
             status TEXT DEFAULT 'Ativa'
         )
     """)

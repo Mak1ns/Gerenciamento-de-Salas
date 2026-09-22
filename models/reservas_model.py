@@ -14,14 +14,14 @@ class ReservasModel:
         try:
             conexao = self.conectar()
             cursor = conexao.cursor()
-           
+        
             cursor.execute("""
                 SELECT COUNT(*) FROM reservas
                 WHERE sala_id = ?
-                  AND data = ?
-                  AND status != 'Cancelada'
-                  AND horario_inicio < ?
-                  AND horario_fim > ?
+                    AND data = ?
+                    AND status != 'Cancelada'
+                    AND horario_inicio < ?
+                    AND horario_fim > ?
             """, (sala_id, str(data), str(horario_fim), str(horario_inicio)))
             qtd = cursor.fetchone()[0]
             conexao.close()
